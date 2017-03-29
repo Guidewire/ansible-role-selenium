@@ -1,0 +1,22 @@
+#!/bin/bash
+# {{ ansible_managed }}
+# This systemd generator creates dependency symlinks that make all selenium
+# services be started/stopped/restarted
+# when selenium.service is started/stopped/restarted.
+
+set -eu
+
+GENDIR="$1"
+echo "$GENDIR" >> /tmp/oo
+WANTDIR="$1/selenium.service.wants"
+SERVICEFILE="/etc/systemd/system/selenium@.service"
+CONFIG_DIR=/etc/selenium.d
+
+mkdir -p "$WANTDIR"
+
+for CONFIG in $(cd $CONFIG_DIR; ls *.conf 2> /dev/null); do
+        NAME=${CONFIG%%.conf}
+        ln -s "$SERVICEFILE" "$WANTDIR/selenium@$NAME.service"
+done
+
+exit 0

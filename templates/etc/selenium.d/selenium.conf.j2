@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+OPTIONS="{{ selenium_pre_jar_options }} {{ selenium_jar_path }}/{{ selenium_jar_file }}
+{%- if selenium_role == 'hub' %}
+ -role hub
+{%- elif selenium_role == 'node' %}
+ -role node -hub {{ selenium_hub_url }}
+{%- endif -%}
+{{ ' ' + selenium_extra_options }}"
+EXEC_OPTIONS="{{ selenium_exec_options }}"

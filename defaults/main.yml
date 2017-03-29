@@ -1,0 +1,14 @@
+selenium_version: 3.3.1
+selenium_jar_file: selenium-server-standalone-{{ selenium_version }}.jar
+selenium_download_url: "http://selenium-release.storage.googleapis.com/{{ '.'.join(selenium_version.split('.')[0:2]) }}/{{ selenium_jar_file }}"
+selenium_jar_path: /usr/local/lib
+selenium_hub: "localhost:4444"
+selenium_role: standalone
+selenium_service_name: "{{ selenium_role }}"
+selenium_extra_options: ''
+###
+selenium_hub_url: "http://{{ selenium_hub }}/grid/register"
+selenium_exec_options: "{{ '' if selenium_role == 'hub' else \"/usr/bin/xvfb-run -s '-screen 0 1280x1024x16' -a\" }}"
+selenium_chrome_driver_version: 2.28
+selenium_pre_jar_options: ""
+#selenium_pre_jar_options: -Dwebdriver.chrome.driver=/bin/chromedriver

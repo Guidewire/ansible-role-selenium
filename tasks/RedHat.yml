@@ -1,0 +1,19 @@
+- name: add chrome repo
+  yum_repository:
+    name: google-chrome
+    description: google-chrome
+    file: google-chrome
+    baseurl: http://dl.google.com/linux/chrome/rpm/stable/$basearch
+    gpgkey: https://dl-ssl.google.com/linux/linux_signing_key.pub
+    
+- name: install requirements
+  yum: name={{ item }} state=latest
+  with_items:
+    - google-chrome-stable
+    - xorg-x11-server-Xvfb
+    - unzip
+    - liberation-mono-fonts
+    - liberation-narrow-fonts
+    - liberation-sans-fonts
+    - liberation-serif-fonts
+  when: "{{ selenium_role != 'hub' }}"

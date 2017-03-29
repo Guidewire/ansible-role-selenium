@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+[Unit]
+Description=selenium %i
+PartOf=selenium.service
+ReloadPropagatedFrom=selenium.service
+Before=systemd-user-sessions.service
+After=network.target
+
+[Service]
+Environment="PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin"
+PrivateTmp=true
+Type=simple
+User=selenium
+ExecStart=/usr/local/bin/selenium-starter /etc/selenium.d/%i.conf /run/selenium/%i.pid
+PIDFile=/run/selenium/%i.pid
+ExecReload=/bin/kill -HUP $MAINPID
+WorkingDirectory=/etc/selenium.d
+ProtectSystem=yes
+StandardOutput=journal
+StandardError=journal
+Restart=always
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

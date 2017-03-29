@@ -1,0 +1,11 @@
+#!/bin/bash
+# {{ ansible_managed }}
+if test -z "$1" -o -z "$2"
+then
+    echo "Usage: $0 configpath pidfile"
+    exit 1
+fi
+mkdir -p /run/selenium
+. $1
+echo $$ > $2
+eval exec $EXEC_OPTIONS java -jar $OPTIONS

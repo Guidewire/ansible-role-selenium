@@ -1,0 +1,16 @@
+- name: add google repo key
+  apt_key:
+    url: "https://dl.google.com/linux/linux_signing_key.pub"
+    
+- name: add chrome repo
+  apt_repository:
+    repo: "deb {{ '[arch=amd64]' if ansible_userspace_bits == 64  else '' }} http://dl.google.com/linux/chrome/deb/ stable main"
+    filename: google-chrome
+    
+- name: install requirements
+  apt: name={{ item }} state=latest
+  with_items:
+    - google-chrome-stable
+    - xvfb
+    - unzip
+  when: "{{ selenium_role != 'hub' }}"

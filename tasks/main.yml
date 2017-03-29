@@ -1,0 +1,57 @@
+# TODO: detect latest version
+# http://docs.seleniumhq.org/download/
+# <p>Download version <a href="https://goo.gl/uTXEJ1">3.3.1</a>
+
+- name: Show selenium version
+  debug: msg="{{ selenium_download_url }}"
+
+- name: Download selenium if required
+  get_url: url={{ selenium_download_url }}  dest={{ selenium_jar_path }}/{{ selenium_jar_file }} owner=root group=root mode=644
+
+- name: create user selenium
+  user: name=selenium shell=/sbin/nologin
+
+- include: "{{ ansible_os_family }}.yml"
+
+- name: install chrome driver
+  unarchive: src=https://chromedriver.storage.googleapis.com/{{ selenium_chrome_driver_version }}/chromedriver_linux{{ ansible_userspace_bits }}.zip
+             dest=/usr/bin/
+             remote_src=yes
+  when: "{{ selenium_role != 'hub' }}"
+
+- name: create required directories
+  file: state=directory path={{ item.p }} owner={{ item.u|default('root') }}
+  with_items:
+    - { p: /etc/selenium.d }
+    - { p: /etc/systemd/system-generators/ }
+    - { p: /run/selenium/, u: selenium}
+
+- name: put selenium-starter
+  template: src=usr/local/bin/selenium-starter dest=/usr/local/bin/selenium-starter mode=755
+  tags: conf
+  
+- name: put selenium configuration
+  template: src=etc/selenium.d/selenium.conf.j2 dest=/etc/selenium.d/{{ selenium_service_name }}.conf
+  notify: "restart selenium@{{ selenium_service_name }}"
+  tags: conf
+
+- name: put systemd configurations
+  template: src={{ item.p }}.j2 dest=/{{ item.p }} mode={{ item.m }}
+  with_items:
+    - { p: etc/systemd/system-generators/selenium-generator, m: 755 }
+    - { p: etc/systemd/system/selenium.service , m: 644 }
+    - { p: etc/systemd/system/selenium@.service, m: 644 }
+  register: service_config
+  tags: conf
+
+- name: reload service config
+  shell: systemctl daemon-reload
+  when: service_config|changed
+
+- name: start and enable selenium service
+  service: name=selenium state=started enabled=true
+  tags: conf
+
+- name: start and enable selenium {{ selenium_service_name }} service
+  service: name=selenium@{{ selenium_service_name }} state=started enabled=true
+  tags: conf

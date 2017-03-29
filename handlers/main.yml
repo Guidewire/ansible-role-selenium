@@ -1,0 +1,2 @@
+- name: restart selenium@{{ selenium_service_name }}
+  service: name=selenium@{{ selenium_service_name }} state=restarted
