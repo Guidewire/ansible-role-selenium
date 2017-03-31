@@ -1,0 +1,21 @@
+- name: get latest selenium-check release
+  uri:
+      url: https://api.github.com/repos/Guidewire/selenium-check/releases/latest
+      return_content: yes
+  register: latest
+
+- name: get selenium-check
+  unarchive: src={{ (latest.json.assets|selectattr('name', 'search', ansible_system|lower + '_' + ansible_go_arch_mappings[ansible_architecture] )|list)[0].browser_download_url }}
+             dest=/tmp/
+             remote_src=yes
+             mode=755
+
+- name: test selenium installation
+  shell: /tmp/selenium-check -h {{ selenium_hub }}
+  changed_when: no
+  register: result
+  ignore_errors: yes
+
+- name: show test output
+  debug: var=result.stderr.split('\n')|union(result.stdout_lines)
+  failed_when: "{{ result|failed }}"

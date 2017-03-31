@@ -12,3 +12,5 @@ selenium_exec_options: "{{ '' if selenium_role == 'hub' else \"/usr/bin/xvfb-run
 selenium_chrome_driver_version: 2.28
 selenium_pre_jar_options: ""
 #selenium_pre_jar_options: -Dwebdriver.chrome.driver=/bin/chromedriver
+ansible_go_arch_mappings:
+  x86_64: amd64

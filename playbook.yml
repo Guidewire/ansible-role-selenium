@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  pre_tasks:
+    - name: install python2
+      raw: test -e /usr/bin/python || (apt update && apt install -y python-minimal)
+      changed_when: false
+    - name: gather facts
+      setup:
+  roles:
+    - role: oracle-java
+      tags: java
+
+    - role: selenium
+      selenium_role: hub
+      selenium_extra_options: "-maxSession 50 -timeout 90 -browserTimeout 90"
+      selenium_version: 3.3.1
+      tags: selenium
+
+    - role: selenium
+      selenium_role: node
+      selenium_version: 3.3.1
+      selenium_extra_options: "-browser browserName=chrome,maxInstances=50"
+      tags: selenium
+      
+    - role: selenium/test
+      tags:
+        - selenium
+        - test

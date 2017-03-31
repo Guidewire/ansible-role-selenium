@@ -10,7 +10,7 @@ Installs selenium on ubuntu 16.04 or centos 7. Creates `systemd` services.
 
 ## Requirements
 
-- java, can be installed with [this role](https://github.com/ansiblebit/oracle-java)
+- java, can be installed with [this role](/ansiblebit/oracle-java)
 
 ## Variables
 
@@ -41,4 +41,30 @@ Installs selenium on ubuntu 16.04 or centos 7. Creates `systemd` services.
       selenium_version: 3.3.1
       selenium_extra_options: "-browser browserName=chrome,maxInstances=50"
       tags: selenium
+
+    - role: selenium/test
+      tags:
+        - selenium
+        - test    
+```
+
+## Test your installaton with selenium/test
+
+Currently only `x86_64`systems can run tests, you can update `ansible_go_arch_mappings` with more options.
+
+```yml
+    - role: selenium/test
+      selenium_hub: "localhost:4444"
+      tags:
+        - selenium
+        - test    
+```
+
+
+## Test
+
+Run tests with [molecule](/metacloud/molecule)
+
+```
+molecule test
 ```
